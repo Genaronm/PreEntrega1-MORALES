@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <script defer src="index.js"></script> 
+    <title>Prueba JavaScript</title>
+</head>
+<header>
+    <nav>
+        <a href="#"><img src="libros/8146003.png" alt="carrito" width="200" height="200"> <span id="cuenta-carrito" style="font-size: 35px;">0</span></a>
+    </nav>
+        
+</header>
+<body>
+    <section class="seccion-libros">
+        <div class="fotos-libros">
+            <div>
+                <img src="/libros/alquimiaymistica.jpg" class="galerias" alt="Alquimia y Mística">
+                <span class="texto-en-imagen">Alquimia y Mística - $20</span>
+                <button class="agregar-al-carrito" data-nombre="Alquimia y Mística" data-precio="20">Agregar al carrito</button>
+            </div>
+            <div>
+                <img src="/libros/ellibrodesimbolos.jpg" class="galerias" alt="El libro de los símbolos">
+                <span class="texto-en-imagen">El libro de los símbolos - $25</span>
+                <button class="agregar-al-carrito" data-nombre="El libro de los símbolos" data-precio="25">Agregar al carrito</button>
+            </div>
+            <div>
+                <img src="/libros/foreverthenewtattoo.jpg" class="galerias" alt="Libro Forever The New Tattoo">
+                <span class="texto-en-imagen">Libro Forever The New Tattoo - $30</span>
+                <button class="agregar-al-carrito" data-nombre="Libro Forever The New Tattoo" data-precio="30">Agregar al carrito</button>
+            </div>
+        </div>
+    </section>
+    <div id="carrito">
+        <h2>Carrito</h2>
+        <ul id="articulos-carrito"></ul>
+        <p>Total: $<span id="total-carrito">0</span></p>
+    </div>
+</body>
+</html>
