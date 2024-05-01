@@ -17,7 +17,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const li = document.createElement('li');
         li.textContent = `${nombre} - $${precio}`;
         listaArticulosCarrito.appendChild(li);
-        
         cantidadArticulos++;
         precioTotal += precio;
         actualizarTotalCarrito();
@@ -26,5 +25,20 @@ document.addEventListener('DOMContentLoaded', function() {
     function actualizarTotalCarrito() {
         totalCarrito.textContent = precioTotal.toFixed(2);
         document.getElementById('cuenta-carrito').textContent = cantidadArticulos;
+    }
+
+    const cantidadPromocional = parseInt(prompt("Introduce la cantidad promocional:"));
+    const precioDescuento = parseFloat(prompt("Introduce el precio de descuento:"));
+
+    let precioFinal = precioTotal;
+
+    if (cantidadPromocional > 0 && precioDescuento > 0) {
+        precioFinal = aplicarDescuento(cantidadPromocional, precioDescuento);
+    }
+
+    console.log(`El precio final con descuento es: $${precioFinal.toFixed(2)}`);
+
+    function aplicarDescuento(cantidadPromocional, precioDescuento) {
+        return precioTotal - (cantidadPromocional * precioDescuento);
     }
 });
