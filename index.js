@@ -1,10 +1,4 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const libros = [
-        { nombre: "Alquimia y Mística", precio: 20 },
-        { nombre: "El libro de los símbolos", precio: 25 },
-        { nombre: "Libro Forever The New Tattoo", precio: 30 }
-    ];
-
     const seccionLibros = document.querySelector('.fotos-libros');
     const listaArticulosCarrito = document.getElementById('articulos-carrito');
     const totalCarrito = document.getElementById('total-carrito');
@@ -13,9 +7,22 @@ document.addEventListener('DOMContentLoaded', function() {
     const botonAplicarDescuento = document.getElementById('aplicar-descuento');
     const resultadoDescuento = document.getElementById('resultado-descuento');
 
-    cargarLibros();
+    let libros = [];
+    let carrito = [];
 
-    function cargarLibros() {
+    async function cargarLibros() {
+        try {
+            const response = await fetch('libros.json');
+            libros = await response.json();
+            almacenarLibros(libros);
+            mostrarLibros(libros);
+        } catch (error) {
+            console.error('Error al cargar los libros:', error);
+        }
+    }
+
+    function mostrarLibros(libros) {
+        seccionLibros.innerHTML = '';
         libros.forEach(libro => {
             const divLibro = document.createElement('div');
             const img = document.createElement('img');
@@ -30,31 +37,37 @@ document.addEventListener('DOMContentLoaded', function() {
 
             img.src = `/libros/${libro.nombre.toLowerCase().replace(/\s/g, '')}.jpg`;
             img.alt = libro.nombre;
-            spanNombre.textContent = `${libro.nombre} - $${libro.precio}`;
+            spanNombre.textContent = libro.nombre;
+            spanPrecio.textContent = `$${libro.precio}`;
             boton.textContent = "Agregar al carrito";
             boton.classList.add('agregar-al-carrito');
             boton.dataset.nombre = libro.nombre;
             boton.dataset.precio = libro.precio;
 
             seccionLibros.appendChild(divLibro);
-        });
 
-        document.querySelectorAll('.agregar-al-carrito').forEach(boton => {
             boton.addEventListener('click', function() {
-                const nombre = boton.dataset.nombre;
-                const precio = parseFloat(boton.dataset.precio);
-                agregarArticuloAlCarrito(nombre, precio);
+                agregarArticuloAlCarrito(libro);
             });
         });
     }
 
-    function agregarArticuloAlCarrito(nombre, precio) {
-        const li = document.createElement('li');
-        li.textContent = `${nombre} - $${precio}`;
-        listaArticulosCarrito.appendChild(li);
+    function agregarArticuloAlCarrito(libro) {
+        carrito.push(libro);
+        actualizarCarrito();
+        almacenarCarrito();
+    }
 
-        const precioActual = parseFloat(totalCarrito.textContent);
-        totalCarrito.textContent = (precioActual + precio).toFixed(2);
+    function actualizarCarrito() {
+        listaArticulosCarrito.innerHTML = '';
+        let total = 0;
+        carrito.forEach(libro => {
+            const li = document.createElement('li');
+            li.textContent = `${libro.nombre} - $${libro.precio}`;
+            listaArticulosCarrito.appendChild(li);
+            total += libro.precio;
+        });
+        totalCarrito.textContent = total.toFixed(2);
     }
 
     botonAplicarDescuento.addEventListener('click', function() {
@@ -70,14 +83,33 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     function aplicarDescuento(cantidadPromocional, precioDescuento) {
-        const precioTotal = parseFloat(totalCarrito.textContent);
-        const precioFinal = precioTotal - (cantidadPromocional * precioDescuento);
-        return precioFinal;
+        const totalSinDescuento = carrito.reduce((sum, libro) => sum + libro.precio, 0);
+        const totalDescuento = cantidadPromocional * precioDescuento;
+        return totalSinDescuento - totalDescuento;
     }
 
-    localStorage.setItem('libros', JSON.stringify(libros));
+    function almacenarLibros(libros) {
+        localStorage.setItem('libros', JSON.stringify(libros));
+    }
 
-    const librosRecuperados = JSON.parse(localStorage.getItem('libros'));
-    console.log("Libros recuperados de localStorage:");
-    console.log(librosRecuperados);
+    function almacenarCarrito() {
+        localStorage.setItem('carrito', JSON.stringify(carrito));
+    }
+
+    function recuperarDatos() {
+        const librosAlmacenados = localStorage.getItem('libros');
+        const carritoAlmacenado = localStorage.getItem('carrito');
+        if (librosAlmacenados) {
+            libros = JSON.parse(librosAlmacenados);
+            mostrarLibros(libros);
+        } else {
+            cargarLibros();
+        }
+        if (carritoAlmacenado) {
+            carrito = JSON.parse(carritoAlmacenado);
+            actualizarCarrito();
+        }
+    }
+
+    recuperarDatos();
 });
